@@ -12,7 +12,6 @@ import os
 import pickle
 from typing import List
 
-# Main tagging function
 def tag_language(tokens: List[str]) -> List[str]:
     """
     Tags each token in the input list with its predicted language.
@@ -26,23 +25,15 @@ def tag_language(tokens: List[str]) -> List[str]:
                 "model.pkl not found! Please run your training script to generate model.pkl first."
             )
 
-    # 1. Extract features from the input tokens
     dicts = [extract_features(t) for t in tokens]
 
-    # 2. Transform features using pre-fitted DictVectorizer
     X = _VEC.transform(dicts)
 
-    # 3. Predict tags
     predictions = _MODEL.predict(X)
 
-    # 4. Return predicted tags as a list of strings
     return [str(tag) for tag in predictions]
 
 
-
-# 1. Load your trained model from disk (e.g., using pickle or joblib)
-#    Example: with open('trained_model.pkl', 'rb') as f: model = pickle.load(f)
-#    (Replace with your actual model loading code)
 _MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.pkl")
 
 if os.path.exists(_MODEL_PATH):
@@ -54,8 +45,7 @@ else:
     _VEC = None
     _MODEL = None
 
-# 2. Extract features from the input tokens to create the feature matrix
-#    Example: features = ... (your feature extraction logic here)
+
 
 def extract_features(word: str) -> dict:
     word = str(word)
@@ -92,7 +82,6 @@ def extract_features(word: str) -> dict:
         "suffix2": lower[-2:],
         "suffix3": lower[-3:],
 
-        # Dedicated CS vs ENG features
         "is_cs_pattern": has_fil_prefix and has_eng_traits,
         "pure_eng_no_fil_prefix": (not has_fil_prefix) and has_eng_traits,
         "has_foreign_letters": has_foreign_letters,
@@ -121,24 +110,8 @@ def extract_features(word: str) -> dict:
         "contains_z": "z" in lower,
     }
 
-# 3. Use the model to predict the tags for each token
-#    Example: predicted = model.predict(features)
-
-
-    # 4. Convert the predictions to a list of strings ("ENG", "FIL", or "OTH")
-    #    Example: tags = [str(tag) for tag in predicted]
-
-    # 5. Return the list of tags
-    #    return tags
-
-    # You can define other functions, import new libraries, or add other Python files as needed, as long as
-    # the tag_language function is retained and correctly accomplishes the expected task.
-
-    # Currently, the bot just tags every token as FIL. Replace this with your more intelligent predictions.
-    #return ['FIL' for i in tokens]
-
 if __name__ == "__main__":
-    example_tokens = ["tangina", "mo", "i", "love", "u", "nagdate", "ako", "sa", "EDSA", "."]
+    example_tokens = ["mahal", "kita", "i", "love", "u", "nagdate", "ako", "sa", "EDSA", "."]
     print("Tokens:", example_tokens)
     tags = tag_language(example_tokens)
     print("Predicted Tags:", tags)
